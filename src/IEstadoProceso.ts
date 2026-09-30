@@ -1,4 +1,4 @@
-import type { Proceso } from "./Proceso.ts";
+import { Proceso } from "./Proceso";
 
 export interface IEstadoProceso {
   avanzar(proceso: Proceso): void;
