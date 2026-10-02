@@ -12,3 +12,23 @@ import { EstadoSimulado } from "../src/EstadoSimulado";
         
         expect(resultado).toBe(bloques[1]);
     });
+
+    it("debería devolver null cuando ningún bloque alcanza", () => {
+        const politica = new FirstFit();
+
+        const bloques = [
+            new BloquedeMemoria(0, 100),
+            new BloquedeMemoria(100, 150)
+        ];
+
+        const proceso = new Proceso(
+            1,
+            300,
+            new EstadoSimulado()
+        );
+
+        const resultado = politica.seleccionarBloque(bloques, proceso);
+
+        expect(resultado).toBeNull();
+    });
+
