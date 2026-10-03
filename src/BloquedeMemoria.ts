@@ -1,12 +1,12 @@
 import {Proceso} from './Proceso';
 
-export class BloquedeMemoria {
-    private _incio: number;
+export class BloqueDeMemoria {
+    private _inicio: number;
     private _tamanio: number
     private _proceso: Proceso | null;
 
     constructor(inicio: number, tamanio: number) {
-        this._incio = inicio;
+        this._inicio = inicio;
         this._tamanio = tamanio;
         this._proceso = null;
     }
@@ -20,7 +20,7 @@ export class BloquedeMemoria {
     }
 
     get inicio(): number {
-        return this._incio;
+        return this._inicio;
     }
 
     get tamanio(): number {

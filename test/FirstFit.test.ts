@@ -1,15 +1,39 @@
 import { describe, expect, it } from "vitest";
 import { FirstFit } from "../src/FirstFit";
-import { BloquedeMemoria } from "../src/BloquedeMemoria";
+import { BloqueDeMemoria } from "../src/BloqueDeMemoria";
 import { Proceso } from "../src/Proceso";
 import { EstadoSimulado } from "../src/EstadoSimulado";
 
-    it("debería seleccionar el primer bloque disponible", () => {
+describe("FirstFit", () => {
+        it("debería seleccionar el primer bloque disponible", () => {
+            const politica = new FirstFit();
+            const bloques = [
+                new BloqueDeMemoria(0, 100),
+                new BloqueDeMemoria(100, 300),
+                new BloqueDeMemoria(400, 600)
+            ];
+            const proceso = new Proceso(1, 200, new EstadoSimulado());
+            const resultado = politica.seleccionarBloque(bloques, proceso);
+
+            expect(resultado).toBe(bloques[1]);
+        });
+
+    it("debería seleccionar el primer bloque que alcanza", () => {
         const politica = new FirstFit();
-        const bloques = [ new BloquedeMemoria(0, 100), new BloquedeMemoria(100, 300), new BloquedeMemoria(400, 600)];
-        const proceso = new Proceso(1,200,new EstadoSimulado());
-        const resultado = politica.seleccionarBloque(bloques,proceso);
-        
+
+        const bloques = [
+            new BloqueDeMemoria(0, 100),
+            new BloqueDeMemoria(100, 300)
+        ];
+
+        const proceso = new Proceso(
+            1,
+            200,
+            new EstadoSimulado()
+        );
+
+        const resultado = politica.seleccionarBloque(bloques, proceso);
+
         expect(resultado).toBe(bloques[1]);
     });
 
@@ -17,8 +41,8 @@ import { EstadoSimulado } from "../src/EstadoSimulado";
         const politica = new FirstFit();
 
         const bloques = [
-            new BloquedeMemoria(0, 100),
-            new BloquedeMemoria(100, 150)
+            new BloqueDeMemoria(0, 100),
+            new BloqueDeMemoria(100, 150)
         ];
 
         const proceso = new Proceso(
@@ -31,4 +55,4 @@ import { EstadoSimulado } from "../src/EstadoSimulado";
 
         expect(resultado).toBeNull();
     });
-
+});

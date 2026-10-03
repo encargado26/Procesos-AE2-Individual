@@ -1,24 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { BloquedeMemoria } from "../src/BloqueDeMemoria";
+import { BloqueDeMemoria } from "../src/BloqueDeMemoria";
 import { EstadoSimulado } from "../src/EstadoSimulado";
 import { Proceso } from "../src/Proceso";
 
 describe("Clase BloqueDeMemoria", () => {
 	it("debería crear un bloque con inicio y tamaño", () => {
-		const bloque = new BloquedeMemoria(0, 1024);
+		const bloque = new BloqueDeMemoria(0, 1024);
 
 		expect(bloque.inicio).toBe(0);
 		expect(bloque.tamanio).toBe(1024);
 	});
 
 	it("debería iniciar sin proceso asignado", () => {
-		const bloque = new BloquedeMemoria(0, 1024);
+		const bloque = new BloqueDeMemoria(0, 1024);
 
 		expect(bloque.proceso).toBeNull();
 	});
 
     it("debería asignar un proceso al bloque", () => {
-        const bloque = new BloquedeMemoria(0,1024);
+        const bloque = new BloqueDeMemoria(0,1024);
         const proceso = new Proceso(1,256,new EstadoSimulado());
 
         bloque.asignarProceso(proceso);
@@ -26,7 +26,7 @@ describe("Clase BloqueDeMemoria", () => {
     });
 
     it("debería liberar el proceso asignado", () => {
-        const bloque = new BloquedeMemoria(0,1024);
+        const bloque = new BloqueDeMemoria(0,1024);
         const proceso = new Proceso(1,256,new EstadoSimulado());
 
         bloque.asignarProceso(proceso);
