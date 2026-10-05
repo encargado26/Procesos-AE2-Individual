@@ -59,4 +59,14 @@ describe("Clase GestorDeMemoria", () => {
 
         expect(gestor.bloques[1].inicio).toBe(256);
     });
+
+    it("debería liberar un proceso asignado", () => {
+        const gestor = new GestorDeMemoria(1024, new FirstFit());
+        const proceso = new Proceso(1, 256, new EstadoSimulado());
+
+        gestor.asignarProceso(proceso);
+        gestor.liberarProceso(proceso);
+
+        expect(gestor.bloques[0].proceso).toBeNull();
+    });
 });
