@@ -6,115 +6,172 @@ import { FirstFit } from "../src/FirstFit";
 import { Metricas } from "../src/Metricas";
 
 describe("Clase Simulador", () => {
-	it("debería iniciar en tick cero", () => {
-		const simulador = new Simulador(
-			new GestordeMemoria(1024, new FirstFit()),
-			new PlanificadorRoundRobin()
-		);
 
-		expect(simulador.tick).toBe(0);
-	});
+    it("debería iniciar en tick cero", () => {
 
-	it("debería avanzar un tick", () => {
-		const simulador = new Simulador(
-			new GestordeMemoria(1024, new FirstFit()),
-			new PlanificadorRoundRobin()
-		);
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
 
-		simulador.avanzarTick();
+        expect(
+            simulador.tick
+        ).toBe(0);
 
-		expect(simulador.tick).toBe(1);
-	});
+    });
 
-	it("debería avanzar dos ticks", () => {
-		const simulador = new Simulador(
-			new GestordeMemoria(1024, new FirstFit()),
-			new PlanificadorRoundRobin()
-		);
+    it("debería avanzar un tick", () => {
 
-		simulador.avanzarTick();
-		simulador.avanzarTick();
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
 
-		expect(simulador.tick).toBe(2);
-	});
+        simulador.avanzarTick();
 
-	it("debería obtener el estado del sistema", () => {
+        expect(
+            simulador.tick
+        ).toBe(1);
 
-		const simulador = new Simulador(
-			new GestordeMemoria(
-				1024,
-				new FirstFit()
-			),
-			new PlanificadorRoundRobin()
-		);
+    });
 
-		expect(
-			simulador.obtenerEstadoSistema()
-		).toBe("Activo");
+    it("debería avanzar dos ticks", () => {
 
-	});
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
 
-	it("deberia obtener el tick actual", () => {
-		const simulador = new Simulador(
-			new GestordeMemoria(
-				1024,
-				new FirstFit()
-			),
-			new PlanificadorRoundRobin()
-		);
+        simulador.avanzarTick();
+        simulador.avanzarTick();
 
-		simulador.avanzarTick();
+        expect(
+            simulador.tick
+        ).toBe(2);
 
-		expect(
-			simulador.obtenerTickActual()
-		).toBe(1);
+    });
 
-	});
+    it("debería obtener el estado del sistema", () => {
 
-	it("deberia devolver el planificador asociado", () => {
-		const planificador = new PlanificadorRoundRobin();
-		const simulador = new Simulador(
-			new GestordeMemoria(
-				1024,
-				new FirstFit()
-			),
-			planificador
-		);
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
 
-		expect(
-			simulador.obtenerPlanificador()
-		).toBe(planificador);
+        expect(
+            simulador.obtenerEstadoSistema()
+        ).toBe("Activo");
 
-	});
+    });
 
-	it("deberia devolver el gestor de memoria asociado", () => {
-		const gestordeMemoria = new GestordeMemoria(
-			1024,
-			new FirstFit()
-		);
-		const simulador = new Simulador(
-			gestordeMemoria,
-			new PlanificadorRoundRobin()
-		);
+    it("debería obtener el tick actual", () => {
 
-		expect(
-			simulador.obtenerGestordeMemoria()
-		).toBe(gestordeMemoria);
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
 
-	});
+        simulador.avanzarTick();
 
-	it("deberia devolver las metricas del simulador", () => {
-		const simulador = new Simulador(
-			new GestordeMemoria(
-				1024,
-				new FirstFit()
-			),
-			new PlanificadorRoundRobin()
-		);
+        expect(
+            simulador.obtenerTickActual()
+        ).toBe(1);
 
-		expect(
-			simulador.obtenerMetricas()
-		).toBeInstanceOf(Metricas);
-	});
+    });
+
+    it("debería devolver el planificador asociado", () => {
+
+        const planificador =
+            new PlanificadorRoundRobin();
+
+        const simulador =
+            new Simulador(
+                new GestordeMemoria(
+                    1024,
+                    new FirstFit()
+                ),
+                planificador
+            );
+
+        expect(
+            simulador.obtenerPlanificador()
+        ).toBe(planificador);
+
+    });
+
+    it("debería devolver el gestor de memoria asociado", () => {
+
+        const gestorDeMemoria =
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            );
+
+        const simulador =
+            new Simulador(
+                gestorDeMemoria,
+                new PlanificadorRoundRobin()
+            );
+
+        expect(
+            simulador.obtenerGestordeMemoria()
+        ).toBe(gestorDeMemoria);
+
+    });
+
+    it("debería devolver las métricas del simulador", () => {
+
+        const simulador =
+            new Simulador(
+                new GestordeMemoria(
+                    1024,
+                    new FirstFit()
+                ),
+                new PlanificadorRoundRobin()
+            );
+
+        expect(
+            simulador.obtenerMetricas()
+        ).toBeInstanceOf(
+            Metricas
+        );
+
+    });
+
+    it("debería actualizar las métricas al avanzar un tick", () => {
+
+        const simulador =
+            new Simulador(
+                new GestordeMemoria(
+                    1024,
+                    new FirstFit()
+                ),
+                new PlanificadorRoundRobin()
+            );
+
+        simulador.avanzarTick();
+
+        expect(
+            simulador.obtenerMetricas()
+        ).toBeInstanceOf(
+            Metricas
+        );
+
+    });
 
 });
