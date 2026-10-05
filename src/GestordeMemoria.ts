@@ -61,6 +61,37 @@ export class GestorDeMemoria {
         bloque?.liberarProceso();
     }
 
+    fusionarBloquesLibres(): void {
+        if (this._bloques.length < 2) {
+            return;
+        }
+
+        this._bloques.sort((a, b) => a.inicio - b.inicio);
+
+        let i = 0;
+
+        while (i < this._bloques.length - 1) {
+            const bloqueActual = this._bloques[i];
+            const siguienteBloque = this._bloques[i + 1];
+
+            const bloquesLibresAdyacentes =
+                bloqueActual.proceso === null &&
+                siguienteBloque.proceso === null &&
+                bloqueActual.inicio + bloqueActual.tamanio === siguienteBloque.inicio;
+
+            if (!bloquesLibresAdyacentes) {
+                i++;
+                continue;
+            }
+
+            bloqueActual.actualizarTamanio(
+                bloqueActual.tamanio + siguienteBloque.tamanio
+            );
+
+            this._bloques.splice(i + 1, 1);
+        }
+    }
+
     get bloques(): BloqueDeMemoria[] {
         return this._bloques;
     }
