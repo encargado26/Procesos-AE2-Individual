@@ -20,36 +20,65 @@ export class GestordeMemoria {
         ];
     }
 
-    asignarProceso(proceso: Proceso): void {
+    asignarProceso(proceso: Proceso): boolean {
 
-        const bloque =
+        const bloqueSeleccionado =
             this._politica.seleccionarBloque(
                 this._bloques,
                 proceso
             );
 
-        if (bloque === null) {
-            return;
-        }
+        return [bloqueSeleccionado]
+            .filter(
+                (bloque): bloque is BloquedeMemoria =>
+                    bloque !== null
+            )
+            .map((bloque) => {
 
-        const espacioLibre =
-            bloque.tamanio - proceso.tamanio;
+                const indice =
+                    this._bloques.indexOf(bloque);
 
-        bloque.asignarProceso(proceso);
+                const bloqueOcupado =
+                    new BloquedeMemoria(
+                        bloque.inicio,
+                        proceso.tamanio
+                    );
 
-        bloque.actualizarTamanio(
-            proceso.tamanio
-        );
+                bloqueOcupado.asignarProceso(proceso);
 
-        const nuevoBloque =
-            new BloquedeMemoria(
-                bloque.inicio + proceso.tamanio,
-                espacioLibre
-            );
+                const espacioRestante =
+                    bloque.tamanio - proceso.tamanio;
 
-        this._bloques.push(
-            nuevoBloque
-        );
+                const bloqueRestante =
+                    new BloquedeMemoria(
+                        bloque.inicio + proceso.tamanio,
+                        espacioRestante
+                    );
+
+                const nuevosBloques =
+                    [
+                        bloqueOcupado,
+                        bloqueRestante
+                    ].filter(
+                        bloqueNuevo =>
+                            bloqueNuevo.tamanio > 0
+                    );
+
+                this._bloques.splice(
+                    indice,
+                    1,
+                    ...nuevosBloques
+                );
+
+                this._bloques.sort(
+                    (primerBloque, segundoBloque) =>
+                        primerBloque.inicio -
+                        segundoBloque.inicio
+                );
+
+                return true;
+
+            })[0] ?? false;
     }
 
     liberarProceso(proceso: Proceso): void {
