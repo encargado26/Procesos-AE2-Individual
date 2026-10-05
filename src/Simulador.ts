@@ -1,11 +1,13 @@
 import { GestordeMemoria } from "./GestordeMemoria";
 import { PlanificadorRoundRobin } from "./PlanificadorRoundRobin";
+import { Metricas } from "./Metricas";
 
 export class Simulador {
 
 	private _tick: number;
 	private _gestordeMemoria: GestordeMemoria;
 	private _planificador: PlanificadorRoundRobin;
+	private _metricas: Metricas;
 
 	constructor(
 		gestordeMemoria: GestordeMemoria,
@@ -14,6 +16,7 @@ export class Simulador {
 		this._tick = 0;
 		this._gestordeMemoria = gestordeMemoria;
 		this._planificador = planificador;
+		this._metricas = new Metricas();
 	}
 
 	avanzarTick(): void {
@@ -34,6 +37,10 @@ export class Simulador {
 
 	obtenerGestordeMemoria(): GestordeMemoria {
 		return this._gestordeMemoria;
+	}
+
+	obtenerMetricas(): Metricas {
+		return this._metricas;
 	}
 
 	get tick(): number {

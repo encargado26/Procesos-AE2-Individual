@@ -3,6 +3,7 @@ import { Simulador } from "../src/Simulador";
 import { GestordeMemoria } from "../src/GestordeMemoria";
 import { PlanificadorRoundRobin } from "../src/PlanificadorRoundRobin";
 import { FirstFit } from "../src/FirstFit";
+import { Metricas } from "../src/Metricas";
 
 describe("Clase Simulador", () => {
 	it("debería iniciar en tick cero", () => {
@@ -100,6 +101,20 @@ describe("Clase Simulador", () => {
 			simulador.obtenerGestordeMemoria()
 		).toBe(gestordeMemoria);
 
+	});
+
+	it("deberia devolver las metricas del simulador", () => {
+		const simulador = new Simulador(
+			new GestordeMemoria(
+				1024,
+				new FirstFit()
+			),
+			new PlanificadorRoundRobin()
+		);
+
+		expect(
+			simulador.obtenerMetricas()
+		).toBeInstanceOf(Metricas);
 	});
 
 });
