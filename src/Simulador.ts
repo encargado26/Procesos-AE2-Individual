@@ -24,6 +24,18 @@ export class Simulador {
 		return "Activo";
 	}
 
+	obtenerTickActual(): number {
+		return this._tick;
+	}
+
+	obtenerPlanificador(): PlanificadorRoundRobin {
+		return this._planificador;
+	}
+
+	obtenerGestordeMemoria(): GestordeMemoria {
+		return this._gestordeMemoria;
+	}
+
 	get tick(): number {
 		return this._tick;
 	}

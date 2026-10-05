@@ -53,4 +53,53 @@ describe("Clase Simulador", () => {
 
 	});
 
+	it("deberia obtener el tick actual", () => {
+		const simulador = new Simulador(
+			new GestordeMemoria(
+				1024,
+				new FirstFit()
+			),
+			new PlanificadorRoundRobin()
+		);
+
+		simulador.avanzarTick();
+
+		expect(
+			simulador.obtenerTickActual()
+		).toBe(1);
+
+	});
+
+	it("deberia devolver el planificador asociado", () => {
+		const planificador = new PlanificadorRoundRobin();
+		const simulador = new Simulador(
+			new GestordeMemoria(
+				1024,
+				new FirstFit()
+			),
+			planificador
+		);
+
+		expect(
+			simulador.obtenerPlanificador()
+		).toBe(planificador);
+
+	});
+
+	it("deberia devolver el gestor de memoria asociado", () => {
+		const gestordeMemoria = new GestordeMemoria(
+			1024,
+			new FirstFit()
+		);
+		const simulador = new Simulador(
+			gestordeMemoria,
+			new PlanificadorRoundRobin()
+		);
+
+		expect(
+			simulador.obtenerGestordeMemoria()
+		).toBe(gestordeMemoria);
+
+	});
+
 });
