@@ -24,6 +24,22 @@ export class Metricas {
 		this._mayorBloqueLibre = mayorBloqueLibre;
 	}
 
+	actualizarFragmentacionExterna(fragmentacionExterna: number): void {
+		this._fragmentacionExterna = fragmentacionExterna;
+	}
+
+	actualizarOcupacionMemoria(ocupacionMemoria: number): void {
+		this._ocupacionMemoria = ocupacionMemoria;
+	}
+
+	actualizarUtilizacionCpu(utilizacionCpu: number): void {
+		this._utilizacionCpu = utilizacionCpu;
+	}
+
+	actualizarCambiosDeContexto(cambiosDeContexto: number): void {
+		this._cambiosDeContexto = cambiosDeContexto;
+	}
+
 	get ocupacionMemoria(): number {
 		return this._ocupacionMemoria;
 	}

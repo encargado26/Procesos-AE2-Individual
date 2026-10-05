@@ -39,4 +39,46 @@ describe("Clase Metricas", () => {
         expect(metricas.fragmentacionExterna).toBe(0);
     });
 
+    it("deberia actualizar la memoria libre ", () => {
+        const metricas = new Metricas();
+        metricas.actualizarMemoriaLibre(400);
+
+        expect(metricas.memoriaLibre).toBe(400);
+    });
+
+    it("deberia actualizar el mayor bloque libre ", () => {
+        const metricas = new Metricas();
+        metricas.actualizarMayorBloqueLibre(300);
+
+        expect(metricas.mayorBloqueLibre).toBe(300);
+    });
+
+    it("deberia actualizar la fragmentación externa ", () => {
+        const metricas = new Metricas();
+        metricas.actualizarFragmentacionExterna(25);
+
+        expect(metricas.fragmentacionExterna).toBe(25);
+    });
+
+    it("deberia actualizar la ocupación de memoria ", () => {
+        const metricas = new Metricas();
+        metricas.actualizarOcupacionMemoria(60);
+
+        expect(metricas.ocupacionMemoria).toBe(60);
+    });
+
+    it("deberia actualizar la utilización de cpu ", () => {
+        const metricas = new Metricas();
+        metricas.actualizarUtilizacionCpu(75);
+
+        expect(metricas.utilizacionCpu).toBe(75);
+    });
+
+    it("deberia actualizar los cambios de contexto ", () => {
+        const metricas = new Metricas();
+        metricas.actualizarCambiosDeContexto(3);
+
+        expect(metricas.cambiosDeContexto).toBe(3);
+    });
+
 });
