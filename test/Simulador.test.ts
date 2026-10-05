@@ -24,5 +24,33 @@ describe("Clase Simulador", () => {
 
 		expect(simulador.tick).toBe(1);
 	});
-    
+
+	it("debería avanzar dos ticks", () => {
+		const simulador = new Simulador(
+			new GestordeMemoria(1024, new FirstFit()),
+			new PlanificadorRoundRobin()
+		);
+
+		simulador.avanzarTick();
+		simulador.avanzarTick();
+
+		expect(simulador.tick).toBe(2);
+	});
+
+	it("debería obtener el estado del sistema", () => {
+
+		const simulador = new Simulador(
+			new GestordeMemoria(
+				1024,
+				new FirstFit()
+			),
+			new PlanificadorRoundRobin()
+		);
+
+		expect(
+			simulador.obtenerEstadoSistema()
+		).toBe("Activo");
+
+	});
+
 });

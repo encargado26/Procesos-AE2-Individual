@@ -20,6 +20,10 @@ export class Simulador {
 		this._tick++;
 	}
 
+	obtenerEstadoSistema(): string {
+		return "Activo";
+	}
+
 	get tick(): number {
 		return this._tick;
 	}
