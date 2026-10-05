@@ -1,6 +1,6 @@
 import { Proceso } from './Proceso';
 
-export class BloqueDeMemoria {
+export class BloquedeMemoria {
 	private _inicio: number;
 	private _tamanio: number;
 	private _proceso: Proceso | null;

@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { Simulador } from "../src/Simulador";
-import { GestorDeMemoria } from "../src/GestordeMemoria";
+import { GestordeMemoria } from "../src/GestordeMemoria";
 import { PlanificadorRoundRobin } from "../src/PlanificadorRoundRobin";
 import { FirstFit } from "../src/FirstFit";
 
 describe("Clase Simulador", () => {
 	it("debería iniciar en tick cero", () => {
 		const simulador = new Simulador(
-			new GestorDeMemoria(1024, new FirstFit()),
+			new GestordeMemoria(1024, new FirstFit()),
 			new PlanificadorRoundRobin()
 		);
 
@@ -16,7 +16,7 @@ describe("Clase Simulador", () => {
 
 	it("debería avanzar un tick", () => {
 		const simulador = new Simulador(
-			new GestorDeMemoria(1024, new FirstFit()),
+			new GestordeMemoria(1024, new FirstFit()),
 			new PlanificadorRoundRobin()
 		);
 

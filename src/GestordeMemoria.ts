@@ -1,10 +1,10 @@
-import { BloqueDeMemoria } from "./BloquedeMemoria";
+import { BloquedeMemoria } from "./BloquedeMemoria";
 import { IPoliticadeAsignacion } from "./IPoliticadeAsignacion";
 import { Proceso } from "./Proceso";
 
-export class GestorDeMemoria {
+export class GestordeMemoria {
 
-    private _bloques: BloqueDeMemoria[];
+    private _bloques: BloquedeMemoria[];
     private _politica: IPoliticadeAsignacion;
 
     constructor(
@@ -14,7 +14,7 @@ export class GestorDeMemoria {
         this._politica = politica;
 
         this._bloques = [
-            new BloqueDeMemoria(0, memoriaTotal)
+            new BloquedeMemoria(0, memoriaTotal)
         ];
     }
 
@@ -40,7 +40,7 @@ export class GestorDeMemoria {
         );
 
         const nuevoBloque =
-            new BloqueDeMemoria(
+            new BloquedeMemoria(
                 bloque.inicio + proceso.tamanio,
                 espacioLibre
             );
@@ -73,7 +73,7 @@ export class GestorDeMemoria {
                 (a, b) => a.inicio - b.inicio
             );
 
-        const bloquesFusionados: BloqueDeMemoria[] = [];
+        const bloquesFusionados: BloquedeMemoria[] = [];
 
         for (const bloque of bloquesOrdenados) {
 
@@ -87,7 +87,7 @@ export class GestorDeMemoria {
                 ultimoBloque.inicio + ultimoBloque.tamanio === bloque.inicio
             ) {
                 const bloqueFusionado =
-                    new BloqueDeMemoria(
+                    new BloquedeMemoria(
                         ultimoBloque.inicio,
                         ultimoBloque.tamanio + bloque.tamanio
                     );
@@ -102,7 +102,7 @@ export class GestorDeMemoria {
         this._bloques = bloquesFusionados;
     }
 
-    get bloques(): BloqueDeMemoria[] {
+    get bloques(): BloquedeMemoria[] {
         return this._bloques;
     }
 }

@@ -1,18 +1,18 @@
-import { GestorDeMemoria } from "./GestordeMemoria";
+import { GestordeMemoria } from "./GestordeMemoria";
 import { PlanificadorRoundRobin } from "./PlanificadorRoundRobin";
 
 export class Simulador {
 
 	private _tick: number;
-	private _gestorDeMemoria: GestorDeMemoria;
+	private _gestordeMemoria: GestordeMemoria;
 	private _planificador: PlanificadorRoundRobin;
 
 	constructor(
-		gestorDeMemoria: GestorDeMemoria,
+		gestordeMemoria: GestordeMemoria,
 		planificador: PlanificadorRoundRobin
 	) {
 		this._tick = 0;
-		this._gestorDeMemoria = gestorDeMemoria;
+		this._gestordeMemoria = gestordeMemoria;
 		this._planificador = planificador;
 	}
 
