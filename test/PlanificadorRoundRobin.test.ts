@@ -80,4 +80,16 @@ describe("Clase PlanificadorRoundRobin", () => {
 		expect(planificador.cantidadDeProcesos()).toBe(2);
 	});
 
+	it("debería iniciar con quantum 2 por defecto", () => {
+		const planificador = new PlanificadorRoundRobin();
+
+		expect(planificador.quantum).toBe(2);
+	});
+
+	it("debería permitir configurar el quantum", () => {
+		const planificador = new PlanificadorRoundRobin(4);
+
+		expect(planificador.quantum).toBe(4);
+	});
+
 });

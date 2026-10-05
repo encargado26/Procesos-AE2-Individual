@@ -5,9 +5,11 @@ export class PlanificadorRoundRobin
 implements IPlanificador {
 
 	private _cola: Proceso[];
+	private _quantum: number;
 
-	constructor() {
+	constructor(quantum: number = 2) {
 		this._cola = [];
+		this._quantum = quantum;
 	}
 
 	agregarProceso(
@@ -49,6 +51,12 @@ implements IPlanificador {
 	cantidadDeProcesos(): number {
 
 		return this._cola.length;
+
+	}
+
+	get quantum(): number {
+
+		return this._quantum;
 
 	}
 
