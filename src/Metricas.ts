@@ -16,6 +16,14 @@ export class Metricas {
 		this._fragmentacionExterna = 0;
 	}
 
+	actualizarMemoriaLibre(memoriaLibre: number): void {
+		this._memoriaLibre = memoriaLibre;
+	}
+
+	actualizarMayorBloqueLibre(mayorBloqueLibre: number): void {
+		this._mayorBloqueLibre = mayorBloqueLibre;
+	}
+
 	get ocupacionMemoria(): number {
 		return this._ocupacionMemoria;
 	}
