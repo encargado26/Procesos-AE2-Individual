@@ -6,10 +6,12 @@ implements IPlanificador {
 
 	private _cola: Proceso[];
 	private _quantum: number;
+	private _cambiosDeContexto: number;
 
 	constructor(quantum: number = 2) {
 		this._cola = [];
 		this._quantum = quantum;
+		this._cambiosDeContexto = 0;
 	}
 
 	agregarProceso(
@@ -34,18 +36,14 @@ implements IPlanificador {
 	}
 
 	rotarProceso(): void {
-
-    const proceso =
-        this._cola.shift();
-
-    if (proceso) {
-
-        this._cola.push(
-            proceso
-        );
-
-    }
-
+		const proceso =
+		
+		this._cola.shift();
+		
+		if (proceso) {
+		this._cola.push(proceso);
+		this._cambiosDeContexto++;
+		}
 	}
 
 	cantidadDeProcesos(): number {
@@ -58,6 +56,12 @@ implements IPlanificador {
 
 		return this._quantum;
 
+	}
+
+	get cambiosDeContexto(): number {
+	
+		return this._cambiosDeContexto;
+	
 	}
 
 }

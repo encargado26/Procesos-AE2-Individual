@@ -92,4 +92,18 @@ describe("Clase PlanificadorRoundRobin", () => {
 		expect(planificador.quantum).toBe(4);
 	});
 
+	it("deberia incrementar los cambios de contexto al rotar un proceso", () => {
+		const planificador = new PlanificadorRoundRobin();
+
+		const proceso1 = new Proceso(1, 256, new EstadoSimulado());
+		const proceso2 = new Proceso(2, 128, new EstadoSimulado());
+
+		planificador.agregarProceso(proceso1);
+		planificador.agregarProceso(proceso2);
+
+		planificador.rotarProceso();
+
+		expect(planificador.cambiosDeContexto).toBe(1);
+	});
+
 });
