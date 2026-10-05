@@ -31,4 +31,19 @@ implements IPlanificador {
 
 	}
 
+	rotarProceso(): void {
+
+    const proceso =
+        this._cola.shift();
+
+    if (proceso) {
+
+        this._cola.push(
+            proceso
+        );
+
+    }
+
+	}
+
 }

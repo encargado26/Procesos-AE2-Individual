@@ -43,4 +43,18 @@ describe("Clase PlanificadorRoundRobin", () => {
 		expect(planificador.obtenerProcesos().length).toBe(2);
 	});
 
+	it("debería rotar el primer proceso al final de la cola", () => {
+		const planificador = new PlanificadorRoundRobin();
+
+		const proceso1 = new Proceso(1, 256, new EstadoSimulado());
+		const proceso2 = new Proceso(2, 128, new EstadoSimulado());
+
+		planificador.agregarProceso(proceso1);
+		planificador.agregarProceso(proceso2);
+
+		planificador.rotarProceso();
+
+		expect(planificador.obtenerProcesoActual()).toBe(proceso2);
+	});
+
 });
