@@ -46,4 +46,10 @@ implements IPlanificador {
 
 	}
 
+	cantidadDeProcesos(): number {
+
+		return this._cola.length;
+
+	}
+
 }

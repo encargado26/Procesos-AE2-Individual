@@ -57,4 +57,27 @@ describe("Clase PlanificadorRoundRobin", () => {
 		expect(planificador.obtenerProcesoActual()).toBe(proceso2);
 	});
 
+	it("debería rotar el proceso actual al final de la cola", () => {
+		const planificador = new PlanificadorRoundRobin();
+
+		const proceso1 = new Proceso(1, 256, new EstadoSimulado());
+		const proceso2 = new Proceso(2, 128, new EstadoSimulado());
+
+		planificador.agregarProceso(proceso1);
+		planificador.agregarProceso(proceso2);
+
+		planificador.rotarProceso();
+
+		expect(planificador.obtenerProcesoActual()).toBe(proceso2);
+	});
+
+	it("debería informar la cantidad de procesos en cola", () => {
+		const planificador = new PlanificadorRoundRobin();
+
+		planificador.agregarProceso(new Proceso(1, 256, new EstadoSimulado()));
+		planificador.agregarProceso(new Proceso(2, 128, new EstadoSimulado()));
+
+		expect(planificador.cantidadDeProcesos()).toBe(2);
+	});
+
 });
