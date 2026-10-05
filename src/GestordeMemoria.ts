@@ -59,37 +59,47 @@ export class GestorDeMemoria {
             );
 
         bloque?.liberarProceso();
+        this.fusionarBloquesLibres();
     }
 
     fusionarBloquesLibres(): void {
+
         if (this._bloques.length < 2) {
             return;
         }
 
-        this._bloques.sort((a, b) => a.inicio - b.inicio);
+        const bloquesOrdenados =
+            [...this._bloques].sort(
+                (a, b) => a.inicio - b.inicio
+            );
 
-        let i = 0;
+        const bloquesFusionados: BloqueDeMemoria[] = [];
 
-        while (i < this._bloques.length - 1) {
-            const bloqueActual = this._bloques[i];
-            const siguienteBloque = this._bloques[i + 1];
+        for (const bloque of bloquesOrdenados) {
 
-            const bloquesLibresAdyacentes =
-                bloqueActual.proceso === null &&
-                siguienteBloque.proceso === null &&
-                bloqueActual.inicio + bloqueActual.tamanio === siguienteBloque.inicio;
+            const ultimoBloque =
+                bloquesFusionados[bloquesFusionados.length - 1];
 
-            if (!bloquesLibresAdyacentes) {
-                i++;
+            if (
+                ultimoBloque &&
+                ultimoBloque.proceso === null &&
+                bloque.proceso === null &&
+                ultimoBloque.inicio + ultimoBloque.tamanio === bloque.inicio
+            ) {
+                const bloqueFusionado =
+                    new BloqueDeMemoria(
+                        ultimoBloque.inicio,
+                        ultimoBloque.tamanio + bloque.tamanio
+                    );
+
+                bloquesFusionados[bloquesFusionados.length - 1] = bloqueFusionado;
                 continue;
             }
 
-            bloqueActual.actualizarTamanio(
-                bloqueActual.tamanio + siguienteBloque.tamanio
-            );
-
-            this._bloques.splice(i + 1, 1);
+            bloquesFusionados.push(bloque);
         }
+
+        this._bloques = bloquesFusionados;
     }
 
     get bloques(): BloqueDeMemoria[] {

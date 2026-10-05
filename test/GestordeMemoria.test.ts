@@ -82,4 +82,33 @@ describe("Clase GestorDeMemoria", () => {
         ).toBeNull();
 
     });
+
+    it("debería fusionar bloques libres adyacentes", () => {
+
+        const gestor = new GestorDeMemoria(
+            1024,
+            new FirstFit()
+        );
+
+        const proceso = new Proceso(
+            1,
+            256,
+            new EstadoSimulado()
+        );
+
+        gestor.asignarProceso(proceso);
+
+        gestor.liberarProceso(proceso);
+
+        gestor.fusionarBloquesLibres();
+
+        expect(
+            gestor.bloques.length
+        ).toBe(1);
+
+        expect(
+            gestor.bloques[0].tamanio
+        ).toBe(1024);
+
+    });
 });
