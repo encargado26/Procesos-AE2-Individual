@@ -50,6 +50,17 @@ export class GestorDeMemoria {
         );
     }
 
+    liberarProceso(proceso: Proceso): void {
+
+        const bloque =
+            this._bloques.find(
+                bloque =>
+                    bloque.proceso === proceso
+            );
+
+        bloque?.liberarProceso();
+    }
+
     get bloques(): BloqueDeMemoria[] {
         return this._bloques;
     }
