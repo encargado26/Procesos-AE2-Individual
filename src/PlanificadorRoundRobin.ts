@@ -25,4 +25,10 @@ implements IPlanificador {
 		return this._cola[0] ?? null;
 	}
 
+	obtenerProcesos(): Proceso[] {
+
+    return this._cola;
+
+	}
+
 }
