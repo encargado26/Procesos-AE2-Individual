@@ -224,7 +224,7 @@ it("no debería modificar los bloques cuando no existe espacio suficiente", () =
     expect(bloquesDespues).toEqual(bloquesAntes);
 });
 
-t("debería dividir el bloque cuando sobra memoria", () => {
+it("debería dividir el bloque cuando sobra memoria", () => {
 
     const gestor =
         new GestordeMemoria(
