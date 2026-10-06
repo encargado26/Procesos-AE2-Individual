@@ -111,4 +111,32 @@ describe("Clase GestordeMemoria", () => {
         ).toBe(1024);
 
     });
+
+    it("debería dividir el bloque cuando sobra memoria", () => {
+
+        const gestor =
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            );
+
+        const proceso =
+            new Proceso(
+                1,
+                1024,
+                new EstadoSimulado(),
+                5
+            );
+
+        const resultado =
+            gestor.asignarProceso(proceso);
+
+        expect(resultado).toBe(true);
+        expect(gestor.bloques.length).toBe(1);
+
+        expect(gestor.bloques[0].inicio).toBe(0);
+        expect(gestor.bloques[0].tamanio).toBe(1024);
+        expect(gestor.bloques[0].proceso).toBe(proceso);
+
+    });
 });
