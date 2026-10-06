@@ -437,4 +437,47 @@ it("debería fusionar un bloque liberado con su vecino izquierdo libre", () => {
     expect(gestor.bloques[1].proceso).toBe(proceso3);
 });
 
+it("debería fusionar un bloque liberado con ambos vecinos libres", () => {
+
+    const gestor = new GestordeMemoria(
+        1024,
+        new FirstFit()
+    );
+
+    const proceso1 = new Proceso(
+        1,
+        200,
+        new EstadoSimulado(),
+        5
+    );
+
+    const proceso2 = new Proceso(
+        2,
+        300,
+        new EstadoSimulado(),
+        5
+    );
+
+    const proceso3 = new Proceso(
+        3,
+        100,
+        new EstadoSimulado(),
+        5
+    );
+
+    gestor.asignarProceso(proceso1);
+    gestor.asignarProceso(proceso2);
+    gestor.asignarProceso(proceso3);
+
+    gestor.liberarProceso(proceso1);
+    gestor.liberarProceso(proceso3);
+
+    gestor.liberarProceso(proceso2);
+
+    expect(gestor.bloques.length).toBe(1);
+    expect(gestor.bloques[0].inicio).toBe(0);
+    expect(gestor.bloques[0].tamanio).toBe(1024);
+    expect(gestor.bloques[0].proceso).toBeNull();
+});
+
 });
