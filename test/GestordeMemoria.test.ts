@@ -139,4 +139,88 @@ describe("Clase GestordeMemoria", () => {
         expect(gestor.bloques[0].proceso).toBe(proceso);
 
     });
+
+    it("debería dividir el bloque cuando sobra memoria", () => {
+
+    const gestor =
+        new GestordeMemoria(
+            1024,
+            new FirstFit()
+        );
+
+    const proceso =
+        new Proceso(
+            1,
+            256,
+            new EstadoSimulado(),
+            5
+        );
+
+    const resultado =
+        gestor.asignarProceso(proceso);
+
+    expect(resultado).toBe(true);
+    expect(gestor.bloques.length).toBe(2);
+
+    expect(gestor.bloques[0].inicio).toBe(0);
+    expect(gestor.bloques[0].tamanio).toBe(256);
+    expect(gestor.bloques[0].proceso).toBe(proceso);
+
+    expect(gestor.bloques[1].inicio).toBe(256);
+    expect(gestor.bloques[1].tamanio).toBe(768);
+    expect(gestor.bloques[1].proceso).toBeNull();
+});
+
+it("no debería modificar los bloques cuando no existe espacio suficiente", () => {
+
+    const gestor =
+        new GestordeMemoria(
+            1024,
+            new FirstFit()
+        );
+
+    const procesoGrande =
+        new Proceso(
+            1,
+            900,
+            new EstadoSimulado(),
+            5
+        );
+
+    const procesoSinEspacio =
+        new Proceso(
+            2,
+            200,
+            new EstadoSimulado(),
+            5
+        );
+
+    gestor.asignarProceso(procesoGrande);
+
+    const bloquesAntes =
+        gestor.bloques.map(
+            bloque => ({
+                inicio: bloque.inicio,
+                tamanio: bloque.tamanio,
+                proceso: bloque.proceso
+            })
+        );
+
+    const resultado =
+        gestor.asignarProceso(
+            procesoSinEspacio
+        );
+
+    const bloquesDespues =
+        gestor.bloques.map(
+            bloque => ({
+                inicio: bloque.inicio,
+                tamanio: bloque.tamanio,
+                proceso: bloque.proceso
+            })
+        );
+
+    expect(resultado).toBe(false);
+    expect(bloquesDespues).toEqual(bloquesAntes);
+});
 });
