@@ -522,4 +522,52 @@ it("debería dejar un único bloque libre al liberar todos los procesos", () => 
     expect(gestor.bloques[0].proceso).toBeNull();
 });
 
+it("no debería mover los bloques ocupados durante la coalescencia", () => {
+
+    const gestor = new GestordeMemoria(
+        1024,
+        new FirstFit()
+    );
+
+    const proceso1 = new Proceso(
+        1,
+        200,
+        new EstadoSimulado(),
+        5
+    );
+
+    const proceso2 = new Proceso(
+        2,
+        300,
+        new EstadoSimulado(),
+        5
+    );
+
+    const proceso3 = new Proceso(
+        3,
+        100,
+        new EstadoSimulado(),
+        5
+    );
+
+    gestor.asignarProceso(proceso1);
+    gestor.asignarProceso(proceso2);
+    gestor.asignarProceso(proceso3);
+
+    const inicioProceso2Antes =
+        gestor.bloques.find(
+            bloque => bloque.proceso === proceso2
+        )?.inicio;
+
+    gestor.liberarProceso(proceso1);
+
+    const inicioProceso2Despues =
+        gestor.bloques.find(
+            bloque => bloque.proceso === proceso2
+        )?.inicio;
+
+    expect(inicioProceso2Antes).toBe(200);
+    expect(inicioProceso2Despues).toBe(200);
+});
+
 });
