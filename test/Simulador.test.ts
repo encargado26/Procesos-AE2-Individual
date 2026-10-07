@@ -205,4 +205,42 @@ describe("Clase Simulador", () => {
 
     });
 
+    it("debería rechazar procesos con PID duplicado", () => {
+
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
+
+        const proceso1 = new Proceso(
+            1,
+            256,
+            new EstadoNuevo(),
+            5
+        );
+
+        const proceso2 = new Proceso(
+            1,
+            128,
+            new EstadoNuevo(),
+            3
+        );
+
+        simulador.registrarProceso(proceso1);
+
+        expect(
+            () => simulador.registrarProceso(proceso2)
+        ).toThrow(
+            "El PID del proceso ya se encuentra registrado"
+        );
+
+        expect(
+            simulador.obtenerProcesos()
+        ).toHaveLength(1);
+
+    });
+
 });
