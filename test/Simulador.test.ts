@@ -4,6 +4,8 @@ import { GestordeMemoria } from "../src/GestordeMemoria";
 import { PlanificadorRoundRobin } from "../src/PlanificadorRoundRobin";
 import { FirstFit } from "../src/FirstFit";
 import { Metricas } from "../src/Metricas";
+import { Proceso } from "../src/Proceso";
+import { EstadoNuevo } from "../src/EstadoNuevo";
 
 describe("Clase Simulador", () => {
 
@@ -171,6 +173,35 @@ describe("Clase Simulador", () => {
         ).toBeInstanceOf(
             Metricas
         );
+
+    });
+
+    it("debería registrar y consultar un proceso", () => {
+
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
+
+        const proceso = new Proceso(
+            1,
+            256,
+            new EstadoNuevo(),
+            5
+        );
+
+        simulador.registrarProceso(proceso);
+
+        expect(
+            simulador.obtenerProcesos()
+        ).toHaveLength(1);
+
+        expect(
+            simulador.obtenerProcesos()[0]
+        ).toBe(proceso);
 
     });
 
