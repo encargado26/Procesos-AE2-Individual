@@ -243,4 +243,33 @@ describe("Clase Simulador", () => {
 
     });
 
+    it("debería proteger la colección interna de procesos", () => {
+
+        const simulador = new Simulador(
+            new GestordeMemoria(
+                1024,
+                new FirstFit()
+            ),
+            new PlanificadorRoundRobin()
+        );
+
+        const proceso = new Proceso(
+            1,
+            256,
+            new EstadoNuevo(),
+            5
+        );
+
+        simulador.registrarProceso(proceso);
+
+        const procesosConsultados = simulador.obtenerProcesos();
+
+        procesosConsultados.pop();
+
+        expect(
+            simulador.obtenerProcesos()
+        ).toHaveLength(1);
+
+    });
+
 });
