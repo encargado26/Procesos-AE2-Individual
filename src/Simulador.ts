@@ -1,6 +1,7 @@
 import { GestordeMemoria } from "./GestordeMemoria";
 import { PlanificadorRoundRobin } from "./PlanificadorRoundRobin";
 import { Metricas } from "./Metricas";
+import { Proceso } from "./Proceso";
 
 export class Simulador {
 
@@ -9,6 +10,7 @@ export class Simulador {
     private _gestordeMemoria: GestordeMemoria;
     private _planificador: PlanificadorRoundRobin;
     private _metricas: Metricas;
+    private _procesos: Proceso[] = [];
 
     constructor(
         gestordeMemoria: GestordeMemoria,
@@ -19,6 +21,7 @@ export class Simulador {
         this._gestordeMemoria = gestordeMemoria;
         this._planificador = planificador;
         this._metricas = new Metricas();
+        this._procesos = [];
     }
 
     avanzarTick(): void {
@@ -54,6 +57,28 @@ export class Simulador {
         this._metricas.actualizarFragmentacionExterna(
             this._gestordeMemoria.obtenerFragmentacionExterna()
         );
+    }
+
+    registrarProceso(proceso: Proceso): void {
+        const pidDuplicado =
+            this._procesos.some(
+                procesoRegistrado =>
+                    procesoRegistrado.pid === proceso.pid
+            );
+
+    [pidDuplicado]
+        .filter(Boolean)
+        .forEach(() => {
+            throw new Error(
+                "El PID del proceso ya se encuentra registrado"
+            );
+        });
+
+    this._procesos.push(proceso);
+    }
+
+    obtenerProcesos(): Proceso[] {
+        return [...this._procesos];
     }
 
     obtenerEstadoSistema(): string {
