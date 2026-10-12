@@ -311,4 +311,53 @@ describe("Clase Simulador", () => {
         )
     ).toBe(true);
     });
+
+    it("deberia dejar esperando memoria al proceso que no puede ser admitido por falta de memoria", () => {
+
+        const gestor = new GestordeMemoria(
+            1024,
+            new FirstFit()
+        );
+
+        const planificador =
+            new PlanificadorRoundRobin(2);
+
+        const simulador = new Simulador(
+            gestor,
+            planificador
+        );
+
+        const proceso1 = new Proceso(
+            1,
+            900,
+            new EstadoNuevo(),
+            5
+        );
+
+        const proceso2 = new Proceso(
+            2,
+            200,
+            new EstadoNuevo(),
+            3
+        );
+
+        simulador.registrarProceso(proceso1);
+        simulador.registrarProceso(proceso2);
+
+        simulador.admitirProceso(proceso1);
+        
+        const resultado = simulador.admitirProceso(proceso2);
+
+        expect(resultado).toBe(false);
+
+        expect(proceso2.estado).toBeInstanceOf(EsperandoMemoria);
+
+        expect(planificador.cantidadDeProcesos()).toBe(1);
+
+        expect(gestor.bloques.some(
+            bloque =>
+                    bloque.proceso === proceso2
+        )
+    ).toBe(false);
+    });
 });
