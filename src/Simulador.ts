@@ -2,6 +2,8 @@ import { GestordeMemoria } from "./GestordeMemoria";
 import { PlanificadorRoundRobin } from "./PlanificadorRoundRobin";
 import { Metricas } from "./Metricas";
 import { Proceso } from "./Proceso";
+import { EstadoListo } from "./EstadoListo";
+import { EsperandoMemoria } from "./EsperandoMemoria";
 
 export class Simulador {
 
@@ -79,6 +81,26 @@ export class Simulador {
 
     obtenerProcesos(): Proceso[] {
         return [...this._procesos];
+    }
+
+    admitirProceso(proceso: Proceso): boolean {
+
+        const memoriaAsignada =
+        
+            this._gestordeMemoria.asignarProceso(proceso);
+
+        if (memoriaAsignada) {
+
+            proceso.cambiarEstado(new EstadoListo());
+
+            this._planificador.agregarProceso(proceso);
+
+        return true;    
+        }
+        
+        proceso.cambiarEstado(new EsperandoMemoria());
+
+        return false;
     }
 
     obtenerEstadoSistema(): string {
