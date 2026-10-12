@@ -29,6 +29,12 @@ implements IPlanificador {
 		return this._cola[0] ?? null;
 	}
 
+	retirarProcesoActual(): Proceso | null {
+
+		return this._cola.shift() ?? null;
+
+	}
+
 	obtenerProcesos(): Proceso[] {
 
     return this._cola;
