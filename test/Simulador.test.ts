@@ -8,6 +8,7 @@ import { Proceso } from "../src/Proceso";
 import { EstadoNuevo } from "../src/EstadoNuevo";
 import { EstadoListo } from "../src/EstadoListo";
 import { EsperandoMemoria } from "../src/EsperandoMemoria";
+import { EstadoTerminado } from "../src/EstadoTerminado";
 
 function crearSistema() {
     const gestor = new GestordeMemoria(
@@ -252,4 +253,95 @@ describe("Clase Simulador", () => {
             )
         ).toBe(true);
     });
+
+    it("debería ejecutar procesos automáticamente respetando Round Robin", () => {
+
+    const {
+        gestor,
+        planificador,
+        simulador
+    } = crearSistema();
+
+    const proceso1 = new Proceso(
+        1,
+        256,
+        new EstadoNuevo(),
+        3
+    );
+
+    const proceso2 = new Proceso(
+        2,
+        256,
+        new EstadoNuevo(),
+        2
+    );
+
+    simulador.registrarProceso(proceso1);
+    simulador.registrarProceso(proceso2);
+
+    simulador.admitirProceso(proceso1);
+    simulador.admitirProceso(proceso2);
+
+    simulador.avanzarTick();
+
+    expect(proceso1.cpuRestante).toBe(2);
+    expect(proceso2.cpuRestante).toBe(2);
+
+    simulador.avanzarTick();
+
+    expect(proceso1.cpuRestante).toBe(1);
+
+    expect(
+        planificador.obtenerProcesoActual()
+    ).toBe(proceso2);
+
+    simulador.avanzarTick();
+
+    expect(proceso2.cpuRestante).toBe(1);
+
+    simulador.avanzarTick();
+
+    expect(proceso2.cpuRestante).toBe(0);
+
+    expect(
+        proceso2.estado
+    ).toBeInstanceOf(EstadoTerminado);
+
+    expect(
+        gestor.bloques.some(
+            bloque =>
+                bloque.proceso === proceso2
+        )
+    ).toBe(false);
+
+    expect(
+        planificador.obtenerProcesoActual()
+    ).toBe(proceso1);
+
+    simulador.avanzarTick();
+
+    expect(proceso1.cpuRestante).toBe(0);
+
+    expect(
+        proceso1.estado
+    ).toBeInstanceOf(EstadoTerminado);
+
+    expect(
+        planificador.cantidadDeProcesos()
+    ).toBe(0);
+
+    expect(
+        gestor.bloques
+    ).toHaveLength(1);
+
+    expect(
+        gestor.bloques[0].tamanio
+    ).toBe(1024);
+
+    expect(
+        gestor.bloques[0].proceso
+    ).toBeNull();
+
+    expect(simulador.tick).toBe(5);
+});
 });
