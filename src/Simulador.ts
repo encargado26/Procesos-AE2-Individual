@@ -31,10 +31,10 @@ export class Simulador {
 
     this.reintentarAdmision();
 
-    this.ejecutarProcesoActual();
-
     const cpuOcupada =
         this._planificador.obtenerProcesoActual() !== null;
+
+    this.ejecutarProcesoActual();
 
     this._ticksCpuOcupada += Number(cpuOcupada);
 
@@ -66,8 +66,7 @@ export class Simulador {
     this._metricas.actualizarFragmentacionExterna(
         this._gestordeMemoria.obtenerFragmentacionExterna()
     );
-
-    }
+}
 
     registrarProceso(proceso: Proceso): void {
         if (this._procesos.some(registrado => registrado.pid === proceso.pid)) {
