@@ -6,6 +6,8 @@ import { FirstFit } from "../src/FirstFit";
 import { Metricas } from "../src/Metricas";
 import { Proceso } from "../src/Proceso";
 import { EstadoNuevo } from "../src/EstadoNuevo";
+import { EstadoListo } from "../src/EstadoListo";
+import { EsperandoMemoria } from "../src/EsperandoMemoria";
 
 describe("Clase Simulador", () => {
 
@@ -272,4 +274,41 @@ describe("Clase Simulador", () => {
 
     });
 
+    it("deberia admitir un proceso si hay memoria suficiente", () => {
+
+        const gestor = new GestordeMemoria(
+            1024,
+            new FirstFit()
+        );
+
+        const planificador =
+            new PlanificadorRoundRobin(2);
+
+        const simulador = new Simulador(
+            gestor,
+            planificador
+        );
+
+        const proceso = new Proceso(
+            1,
+            256,
+            new EstadoNuevo(),
+            5
+        );
+
+        simulador.registrarProceso(proceso);
+        const resultado = simulador.admitirProceso(proceso);
+
+        expect(resultado).toBe(true);
+
+        expect(proceso.estado).toBeInstanceOf(EstadoListo);
+
+        expect(planificador.obtenerProcesoActual()).toBe(proceso);
+
+        expect(gestor.bloques.some(
+            bloque =>
+                    bloque.proceso === proceso
+        )
+    ).toBe(true);
+    });
 });
