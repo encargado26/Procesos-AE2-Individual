@@ -26,29 +26,47 @@ export class Simulador {
         this._esperandoMemoria = [];
     }
 
+
     avanzarTick(): void {
-        this.reintentarAdmision();
 
-        const cpuOcupada = this._planificador.obtenerProcesoActual() !== null;
-        this._ticksCpuOcupada += Number(cpuOcupada);
-        this._tick++;
+    this.reintentarAdmision();
 
-        this._metricas.actualizarUtilizacionCpu(
-            100 * this._ticksCpuOcupada / this._tick
-        );
-        this._metricas.actualizarCambiosDeContexto(this._planificador.cambiosDeContexto);
-        this._metricas.actualizarOcupacionMemoria(
-            this._gestordeMemoria.obtenerOcupacionMemoria()
-        );
-        this._metricas.actualizarMemoriaLibre(
-            this._gestordeMemoria.obtenerMemoriaLibre()
-        );
-        this._metricas.actualizarMayorBloqueLibre(
-            this._gestordeMemoria.obtenerMayorBloqueLibre()
-        );
-        this._metricas.actualizarFragmentacionExterna(
-            this._gestordeMemoria.obtenerFragmentacionExterna()
-        );
+    this.ejecutarProcesoActual();
+
+    const cpuOcupada =
+        this._planificador.obtenerProcesoActual() !== null;
+
+    this._ticksCpuOcupada += Number(cpuOcupada);
+
+    this._tick++;
+
+    const utilizacionCpu =
+        100 * this._ticksCpuOcupada / this._tick;
+
+    this._metricas.actualizarUtilizacionCpu(
+        utilizacionCpu
+    );
+
+    this._metricas.actualizarCambiosDeContexto(
+        this._planificador.cambiosDeContexto
+    );
+
+    this._metricas.actualizarOcupacionMemoria(
+        this._gestordeMemoria.obtenerOcupacionMemoria()
+    );
+
+    this._metricas.actualizarMemoriaLibre(
+        this._gestordeMemoria.obtenerMemoriaLibre()
+    );
+
+    this._metricas.actualizarMayorBloqueLibre(
+        this._gestordeMemoria.obtenerMayorBloqueLibre()
+    );
+
+    this._metricas.actualizarFragmentacionExterna(
+        this._gestordeMemoria.obtenerFragmentacionExterna()
+    );
+
     }
 
     registrarProceso(proceso: Proceso): void {
