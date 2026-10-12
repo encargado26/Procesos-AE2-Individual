@@ -4,6 +4,8 @@ import { Metricas } from "./Metricas";
 import { Proceso } from "./Proceso";
 import { EstadoListo } from "./EstadoListo";
 import { EsperandoMemoria } from "./EsperandoMemoria";
+import { EstadoEjecutando } from "./EstadoEjecutado";
+import { EstadoTerminado } from "./EstadoTerminado";
 
 export class Simulador {
     private _tick: number;
@@ -85,6 +87,49 @@ export class Simulador {
         pendientes.forEach(proceso => this.admitirProceso(proceso));
     }
 
+    private ejecutarProcesoActual(): void {
+
+        const procesoActual = 
+            this._planificador.obtenerProcesoActual();
+
+        if (procesoActual === null) {
+            return;
+        }
+        procesoActual.cambiarEstado(new EstadoEjecutando());
+
+        procesoActual.consumirCpu();
+        procesoActual.consumirQuantum();
+
+        if (procesoActual.cpuRestante === 0) {
+            
+            this._planificador.retirarProcesoActual();
+
+            procesoActual.cambiarEstado(new EstadoTerminado());
+
+            procesoActual.reiniciarQuantum();
+
+            this._gestordeMemoria.liberarProceso(procesoActual);
+
+            return;
+        }
+
+        const quatumAgotado = 
+             procesoActual.quantumConsumido >=
+             this._planificador.quantum;
+
+        if (quatumAgotado) {
+
+            procesoActual.reiniciarQuantum();
+            
+            const existenOtrosListos =
+                this._planificador.cantidadDeProcesos() > 1;
+
+            if (existenOtrosListos) {
+                procesoActual.cambiarEstado(new EstadoListo());
+                this._planificador.rotarProceso();
+            }
+        }      
+    }
     obtenerEstadoSistema(): string {
         return "Activo";
     }
