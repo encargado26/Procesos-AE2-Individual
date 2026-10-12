@@ -6,77 +6,54 @@ import { EstadoListo } from "./EstadoListo";
 import { EsperandoMemoria } from "./EsperandoMemoria";
 
 export class Simulador {
-
     private _tick: number;
     private _ticksCpuOcupada: number;
     private _gestordeMemoria: GestordeMemoria;
     private _planificador: PlanificadorRoundRobin;
     private _metricas: Metricas;
-    private _procesos: Proceso[] = [];
+    private _procesos: Proceso[];
+    private _esperandoMemoria: Proceso[];
 
-    constructor(
-        gestordeMemoria: GestordeMemoria,
-        planificador: PlanificadorRoundRobin
-    ) {
+    constructor(gestordeMemoria: GestordeMemoria, planificador: PlanificadorRoundRobin) {
         this._tick = 0;
         this._ticksCpuOcupada = 0;
         this._gestordeMemoria = gestordeMemoria;
         this._planificador = planificador;
         this._metricas = new Metricas();
         this._procesos = [];
+        this._esperandoMemoria = [];
     }
 
     avanzarTick(): void {
-        const cpuOcupada =
-            this._planificador.obtenerProcesoActual() !== null;
+        this.reintentarAdmision();
 
+        const cpuOcupada = this._planificador.obtenerProcesoActual() !== null;
         this._ticksCpuOcupada += Number(cpuOcupada);
         this._tick++;
 
-        const utilizacionCpu =
-            100 * this._ticksCpuOcupada / this._tick;
-
         this._metricas.actualizarUtilizacionCpu(
-            utilizacionCpu
+            100 * this._ticksCpuOcupada / this._tick
         );
-
-        this._metricas.actualizarCambiosDeContexto(
-            this._planificador.cambiosDeContexto
-        );
-
+        this._metricas.actualizarCambiosDeContexto(this._planificador.cambiosDeContexto);
         this._metricas.actualizarOcupacionMemoria(
             this._gestordeMemoria.obtenerOcupacionMemoria()
         );
-
         this._metricas.actualizarMemoriaLibre(
             this._gestordeMemoria.obtenerMemoriaLibre()
         );
-
         this._metricas.actualizarMayorBloqueLibre(
             this._gestordeMemoria.obtenerMayorBloqueLibre()
         );
-
         this._metricas.actualizarFragmentacionExterna(
             this._gestordeMemoria.obtenerFragmentacionExterna()
         );
     }
 
     registrarProceso(proceso: Proceso): void {
-        const pidDuplicado =
-            this._procesos.some(
-                procesoRegistrado =>
-                    procesoRegistrado.pid === proceso.pid
-            );
-
-    [pidDuplicado]
-        .filter(Boolean)
-        .forEach(() => {
-            throw new Error(
-                "El PID del proceso ya se encuentra registrado"
-            );
-        });
-
-    this._procesos.push(proceso);
+        if (this._procesos.some(registrado => registrado.pid === proceso.pid)) {
+            throw new Error("El PID del proceso ya se encuentra registrado");
+        }
+        this._procesos.push(proceso);
     }
 
     obtenerProcesos(): Proceso[] {
@@ -84,23 +61,28 @@ export class Simulador {
     }
 
     admitirProceso(proceso: Proceso): boolean {
-
-        const memoriaAsignada =
-        
-            this._gestordeMemoria.asignarProceso(proceso);
-
+        const memoriaAsignada = this._gestordeMemoria.asignarProceso(proceso);
         if (memoriaAsignada) {
-
             proceso.cambiarEstado(new EstadoListo());
-
             this._planificador.agregarProceso(proceso);
-
-        return true;    
+            return true;
         }
-        
-        proceso.cambiarEstado(new EsperandoMemoria());
 
+        proceso.cambiarEstado(new EsperandoMemoria());
+        if (!this._esperandoMemoria.some(esperando => esperando.pid === proceso.pid)) {
+            this._esperandoMemoria.push(proceso);
+        }
         return false;
+    }
+
+    obtenerProcesosEsperandoMemoria(): Proceso[] {
+        return [...this._esperandoMemoria];
+    }
+
+    private reintentarAdmision(): void {
+        const pendientes = [...this._esperandoMemoria];
+        this._esperandoMemoria = [];
+        pendientes.forEach(proceso => this.admitirProceso(proceso));
     }
 
     obtenerEstadoSistema(): string {
