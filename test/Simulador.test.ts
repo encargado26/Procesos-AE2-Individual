@@ -9,184 +9,76 @@ import { EstadoNuevo } from "../src/EstadoNuevo";
 import { EstadoListo } from "../src/EstadoListo";
 import { EsperandoMemoria } from "../src/EsperandoMemoria";
 
+function crearSistema() {
+    const gestor = new GestordeMemoria(
+        1024,
+        new FirstFit()
+    );
+
+    const planificador =
+        new PlanificadorRoundRobin(2);
+
+    const simulador =
+        new Simulador(
+            gestor,
+            planificador
+        );
+
+    return {
+        gestor,
+        planificador,
+        simulador
+    };
+}
+
 describe("Clase Simulador", () => {
 
-    it("debería iniciar en tick cero", () => {
+    it("debería iniciar correctamente", () => {
+        const {
+            gestor,
+            planificador,
+            simulador
+        } = crearSistema();
 
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
-
-        expect(
-            simulador.tick
-        ).toBe(0);
-
-    });
-
-    it("debería avanzar un tick", () => {
-
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
-
-        simulador.avanzarTick();
+        expect(simulador.tick).toBe(0);
+        expect(simulador.obtenerTickActual()).toBe(0);
+        expect(simulador.obtenerEstadoSistema()).toBe("Activo");
 
         expect(
-            simulador.tick
-        ).toBe(1);
-
-    });
-
-    it("debería avanzar dos ticks", () => {
-
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
-
-        simulador.avanzarTick();
-        simulador.avanzarTick();
-
-        expect(
-            simulador.tick
-        ).toBe(2);
-
-    });
-
-    it("debería obtener el estado del sistema", () => {
-
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
-
-        expect(
-            simulador.obtenerEstadoSistema()
-        ).toBe("Activo");
-
-    });
-
-    it("debería obtener el tick actual", () => {
-
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
-
-        simulador.avanzarTick();
-
-        expect(
-            simulador.obtenerTickActual()
-        ).toBe(1);
-
-    });
-
-    it("debería devolver el planificador asociado", () => {
-
-        const planificador =
-            new PlanificadorRoundRobin();
-
-        const simulador =
-            new Simulador(
-                new GestordeMemoria(
-                    1024,
-                    new FirstFit()
-                ),
-                planificador
-            );
+            simulador.obtenerGestordeMemoria()
+        ).toBe(gestor);
 
         expect(
             simulador.obtenerPlanificador()
         ).toBe(planificador);
 
-    });
-
-    it("debería devolver el gestor de memoria asociado", () => {
-
-        const gestorDeMemoria =
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            );
-
-        const simulador =
-            new Simulador(
-                gestorDeMemoria,
-                new PlanificadorRoundRobin()
-            );
-
-        expect(
-            simulador.obtenerGestordeMemoria()
-        ).toBe(gestorDeMemoria);
-
-    });
-
-    it("debería devolver las métricas del simulador", () => {
-
-        const simulador =
-            new Simulador(
-                new GestordeMemoria(
-                    1024,
-                    new FirstFit()
-                ),
-                new PlanificadorRoundRobin()
-            );
-
         expect(
             simulador.obtenerMetricas()
-        ).toBeInstanceOf(
-            Metricas
-        );
-
+        ).toBeInstanceOf(Metricas);
     });
 
-    it("debería actualizar las métricas al avanzar un tick", () => {
-
-        const simulador =
-            new Simulador(
-                new GestordeMemoria(
-                    1024,
-                    new FirstFit()
-                ),
-                new PlanificadorRoundRobin()
-            );
+    it("debería avanzar ticks y actualizar métricas", () => {
+        const { simulador } = crearSistema();
 
         simulador.avanzarTick();
+        simulador.avanzarTick();
 
-        expect(
-            simulador.obtenerMetricas()
-        ).toBeInstanceOf(
-            Metricas
-        );
+        const metricas =
+            simulador.obtenerMetricas();
 
+        expect(simulador.tick).toBe(2);
+        expect(simulador.obtenerTickActual()).toBe(2);
+
+        expect(metricas.utilizacionCpu).toBe(0);
+        expect(metricas.ocupacionMemoria).toBe(0);
+        expect(metricas.memoriaLibre).toBe(1024);
+        expect(metricas.mayorBloqueLibre).toBe(1024);
+        expect(metricas.fragmentacionExterna).toBe(0);
+        expect(metricas.cambiosDeContexto).toBe(0);
     });
 
-    it("debería registrar y consultar un proceso", () => {
-
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
+    it("debería registrar procesos protegiendo la colección interna", () => {
+        const { simulador } = crearSistema();
 
         const proceso = new Proceso(
             1,
@@ -197,25 +89,20 @@ describe("Clase Simulador", () => {
 
         simulador.registrarProceso(proceso);
 
+        const procesos =
+            simulador.obtenerProcesos();
+
+        expect(procesos).toEqual([proceso]);
+
+        procesos.pop();
+
         expect(
             simulador.obtenerProcesos()
-        ).toHaveLength(1);
-
-        expect(
-            simulador.obtenerProcesos()[0]
-        ).toBe(proceso);
-
+        ).toEqual([proceso]);
     });
 
-    it("debería rechazar procesos con PID duplicado", () => {
-
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
+    it("debería rechazar un PID duplicado", () => {
+        const { simulador } = crearSistema();
 
         const proceso1 = new Proceso(
             1,
@@ -234,60 +121,25 @@ describe("Clase Simulador", () => {
         simulador.registrarProceso(proceso1);
 
         expect(
-            () => simulador.registrarProceso(proceso2)
+            () =>
+                simulador.registrarProceso(
+                    proceso2
+                )
         ).toThrow(
             "El PID del proceso ya se encuentra registrado"
         );
 
         expect(
             simulador.obtenerProcesos()
-        ).toHaveLength(1);
-
+        ).toEqual([proceso1]);
     });
 
-    it("debería proteger la colección interna de procesos", () => {
-
-        const simulador = new Simulador(
-            new GestordeMemoria(
-                1024,
-                new FirstFit()
-            ),
-            new PlanificadorRoundRobin()
-        );
-
-        const proceso = new Proceso(
-            1,
-            256,
-            new EstadoNuevo(),
-            5
-        );
-
-        simulador.registrarProceso(proceso);
-
-        const procesosConsultados = simulador.obtenerProcesos();
-
-        procesosConsultados.pop();
-
-        expect(
-            simulador.obtenerProcesos()
-        ).toHaveLength(1);
-
-    });
-
-    it("deberia admitir un proceso si hay memoria suficiente", () => {
-
-        const gestor = new GestordeMemoria(
-            1024,
-            new FirstFit()
-        );
-
-        const planificador =
-            new PlanificadorRoundRobin(2);
-
-        const simulador = new Simulador(
+    it("debería admitir un proceso cuando hay memoria", () => {
+        const {
             gestor,
-            planificador
-        );
+            planificador,
+            simulador
+        } = crearSistema();
 
         const proceso = new Proceso(
             1,
@@ -297,35 +149,34 @@ describe("Clase Simulador", () => {
         );
 
         simulador.registrarProceso(proceso);
-        const resultado = simulador.admitirProceso(proceso);
+
+        const resultado =
+            simulador.admitirProceso(proceso);
 
         expect(resultado).toBe(true);
 
-        expect(proceso.estado).toBeInstanceOf(EstadoListo);
+        expect(
+            proceso.estado
+        ).toBeInstanceOf(EstadoListo);
 
-        expect(planificador.obtenerProcesoActual()).toBe(proceso);
+        expect(
+            planificador.obtenerProcesoActual()
+        ).toBe(proceso);
 
-        expect(gestor.bloques.some(
-            bloque =>
+        expect(
+            gestor.bloques.some(
+                bloque =>
                     bloque.proceso === proceso
-        )
-    ).toBe(true);
+            )
+        ).toBe(true);
     });
 
-    it("deberia dejar esperando memoria al proceso que no puede ser admitido por falta de memoria", () => {
-
-        const gestor = new GestordeMemoria(
-            1024,
-            new FirstFit()
-        );
-
-        const planificador =
-            new PlanificadorRoundRobin(2);
-
-        const simulador = new Simulador(
+    it("debería esperar memoria y reintentar la admisión en el siguiente tick", () => {
+        const {
             gestor,
-            planificador
-        );
+            planificador,
+            simulador
+        } = crearSistema();
 
         const proceso1 = new Proceso(
             1,
@@ -344,20 +195,61 @@ describe("Clase Simulador", () => {
         simulador.registrarProceso(proceso1);
         simulador.registrarProceso(proceso2);
 
-        simulador.admitirProceso(proceso1);
-        
-        const resultado = simulador.admitirProceso(proceso2);
+        const admision1 =
+            simulador.admitirProceso(proceso1);
 
-        expect(resultado).toBe(false);
+        const admision2 =
+            simulador.admitirProceso(proceso2);
 
-        expect(proceso2.estado).toBeInstanceOf(EsperandoMemoria);
+        expect(admision1).toBe(true);
+        expect(admision2).toBe(false);
 
-        expect(planificador.cantidadDeProcesos()).toBe(1);
+        expect(
+            proceso2.estado
+        ).toBeInstanceOf(
+            EsperandoMemoria
+        );
 
-        expect(gestor.bloques.some(
-            bloque =>
+        expect(
+            simulador.obtenerProcesosEsperandoMemoria()
+        ).toEqual([proceso2]);
+
+        expect(
+            planificador.cantidadDeProcesos()
+        ).toBe(1);
+
+        expect(
+            gestor.bloques.some(
+                bloque =>
                     bloque.proceso === proceso2
-        )
-    ).toBe(false);
+            )
+        ).toBe(false);
+
+        gestor.liberarProceso(proceso1);
+
+        simulador.avanzarTick();
+
+        expect(simulador.tick).toBe(1);
+
+        expect(
+            proceso2.estado
+        ).toBeInstanceOf(
+            EstadoListo
+        );
+
+        expect(
+            simulador.obtenerProcesosEsperandoMemoria()
+        ).toHaveLength(0);
+
+        expect(
+            planificador.obtenerProcesos()
+        ).toContain(proceso2);
+
+        expect(
+            gestor.bloques.some(
+                bloque =>
+                    bloque.proceso === proceso2
+            )
+        ).toBe(true);
     });
 });
