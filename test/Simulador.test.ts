@@ -44,18 +44,9 @@ describe("Clase Simulador", () => {
         expect(simulador.tick).toBe(0);
         expect(simulador.obtenerTickActual()).toBe(0);
         expect(simulador.obtenerEstadoSistema()).toBe("Activo");
-
-        expect(
-            simulador.obtenerGestordeMemoria()
-        ).toBe(gestor);
-
-        expect(
-            simulador.obtenerPlanificador()
-        ).toBe(planificador);
-
-        expect(
-            simulador.obtenerMetricas()
-        ).toBeInstanceOf(Metricas);
+        expect(simulador.obtenerGestordeMemoria()).toBe(gestor);
+        expect(simulador.obtenerPlanificador()).toBe(planificador);
+        expect(simulador.obtenerMetricas()).toBeInstanceOf(Metricas);
     });
 
     it("debería avanzar ticks y actualizar métricas", () => {
@@ -97,9 +88,7 @@ describe("Clase Simulador", () => {
 
         procesos.pop();
 
-        expect(
-            simulador.obtenerProcesos()
-        ).toEqual([proceso]);
+        expect(simulador.obtenerProcesos()).toEqual([proceso]);
     });
 
     it("debería rechazar un PID duplicado", () => {
@@ -121,18 +110,8 @@ describe("Clase Simulador", () => {
 
         simulador.registrarProceso(proceso1);
 
-        expect(
-            () =>
-                simulador.registrarProceso(
-                    proceso2
-                )
-        ).toThrow(
-            "El PID del proceso ya se encuentra registrado"
-        );
-
-        expect(
-            simulador.obtenerProcesos()
-        ).toEqual([proceso1]);
+        expect(() =>simulador.registrarProceso(proceso2)).toThrow("El PID del proceso ya se encuentra registrado");
+        expect(simulador.obtenerProcesos()).toEqual([proceso1]);
     });
 
     it("debería admitir un proceso cuando hay memoria", () => {
@@ -151,25 +130,12 @@ describe("Clase Simulador", () => {
 
         simulador.registrarProceso(proceso);
 
-        const resultado =
-            simulador.admitirProceso(proceso);
+        const resultado =simulador.admitirProceso(proceso);
 
         expect(resultado).toBe(true);
-
-        expect(
-            proceso.estado
-        ).toBeInstanceOf(EstadoListo);
-
-        expect(
-            planificador.obtenerProcesoActual()
-        ).toBe(proceso);
-
-        expect(
-            gestor.bloques.some(
-                bloque =>
-                    bloque.proceso === proceso
-            )
-        ).toBe(true);
+        expect(proceso.estado).toBeInstanceOf(EstadoListo);
+        expect(planificador.obtenerProcesoActual()).toBe(proceso);
+        expect(gestor.bloques.some(bloque => bloque.proceso === proceso)).toBe(true);
     });
 
     it("debería esperar memoria y reintentar la admisión en el siguiente tick", () => {
@@ -204,144 +170,131 @@ describe("Clase Simulador", () => {
 
         expect(admision1).toBe(true);
         expect(admision2).toBe(false);
-
-        expect(
-            proceso2.estado
-        ).toBeInstanceOf(
-            EsperandoMemoria
-        );
-
-        expect(
-            simulador.obtenerProcesosEsperandoMemoria()
-        ).toEqual([proceso2]);
-
-        expect(
-            planificador.cantidadDeProcesos()
-        ).toBe(1);
-
-        expect(
-            gestor.bloques.some(
-                bloque =>
-                    bloque.proceso === proceso2
-            )
-        ).toBe(false);
+        expect(proceso2.estado).toBeInstanceOf(EsperandoMemoria);
+        expect(simulador.obtenerProcesosEsperandoMemoria()).toEqual([proceso2]);
+        expect(planificador.cantidadDeProcesos()).toBe(1);
+        expect(gestor.bloques.some(bloque =>bloque.proceso === proceso2)).toBe(false);
 
         gestor.liberarProceso(proceso1);
 
         simulador.avanzarTick();
 
         expect(simulador.tick).toBe(1);
-
-        expect(
-            proceso2.estado
-        ).toBeInstanceOf(
-            EstadoListo
-        );
-
-        expect(
-            simulador.obtenerProcesosEsperandoMemoria()
-        ).toHaveLength(0);
-
-        expect(
-            planificador.obtenerProcesos()
-        ).toContain(proceso2);
-
-        expect(
-            gestor.bloques.some(
-                bloque =>
-                    bloque.proceso === proceso2
-            )
-        ).toBe(true);
+        expect(proceso2.estado).toBeInstanceOf(EstadoListo);
+        expect(simulador.obtenerProcesosEsperandoMemoria()).toHaveLength(0);
+        expect(planificador.obtenerProcesos()).toContain(proceso2);
+        expect(gestor.bloques.some(bloque =>bloque.proceso === proceso2)).toBe(true);
     });
 
     it("debería ejecutar procesos automáticamente respetando Round Robin", () => {
 
-    const {
-        gestor,
-        planificador,
-        simulador
-    } = crearSistema();
+        const {
+            gestor,
+            planificador,
+            simulador
+        } = crearSistema();
 
-    const proceso1 = new Proceso(
-        1,
-        256,
-        new EstadoNuevo(),
-        3
-    );
+        const proceso1 = new Proceso(
+            1,
+            256,
+            new EstadoNuevo(),
+            3
+        );
 
-    const proceso2 = new Proceso(
-        2,
-        256,
-        new EstadoNuevo(),
-        2
-    );
+        const proceso2 = new Proceso(
+            2,
+            256,
+            new EstadoNuevo(),
+            2
+        );
 
-    simulador.registrarProceso(proceso1);
-    simulador.registrarProceso(proceso2);
+        simulador.registrarProceso(proceso1);
+        simulador.registrarProceso(proceso2);
 
-    simulador.admitirProceso(proceso1);
-    simulador.admitirProceso(proceso2);
+        simulador.admitirProceso(proceso1);
+        simulador.admitirProceso(proceso2);
 
-    simulador.avanzarTick();
+        simulador.avanzarTick();
 
-    expect(proceso1.cpuRestante).toBe(2);
-    expect(proceso2.cpuRestante).toBe(2);
+        expect(proceso1.cpuRestante).toBe(2);
+        expect(proceso2.cpuRestante).toBe(2);
 
-    simulador.avanzarTick();
+        simulador.avanzarTick();
 
-    expect(proceso1.cpuRestante).toBe(1);
+        expect(proceso1.cpuRestante).toBe(1);
+        expect(planificador.obtenerProcesoActual()).toBe(proceso2);
 
-    expect(
-        planificador.obtenerProcesoActual()
-    ).toBe(proceso2);
+        simulador.avanzarTick();
 
-    simulador.avanzarTick();
+        expect(proceso2.cpuRestante).toBe(1);
 
-    expect(proceso2.cpuRestante).toBe(1);
+        simulador.avanzarTick();
 
-    simulador.avanzarTick();
+        expect(proceso2.cpuRestante).toBe(0);
+        expect(proceso2.estado).toBeInstanceOf(EstadoTerminado);
+        expect(gestor.bloques.some(bloque =>bloque.proceso === proceso2 )).toBe(false);
+        expect(planificador.obtenerProcesoActual()).toBe(proceso1);
 
-    expect(proceso2.cpuRestante).toBe(0);
+        simulador.avanzarTick();
 
-    expect(
-        proceso2.estado
-    ).toBeInstanceOf(EstadoTerminado);
-
-    expect(
-        gestor.bloques.some(
-            bloque =>
-                bloque.proceso === proceso2
-        )
-    ).toBe(false);
-
-    expect(
-        planificador.obtenerProcesoActual()
-    ).toBe(proceso1);
-
-    simulador.avanzarTick();
-
-    expect(proceso1.cpuRestante).toBe(0);
-
-    expect(
-        proceso1.estado
-    ).toBeInstanceOf(EstadoTerminado);
-
-    expect(
-        planificador.cantidadDeProcesos()
-    ).toBe(0);
-
-    expect(
-        gestor.bloques
-    ).toHaveLength(1);
-
-    expect(
-        gestor.bloques[0].tamanio
-    ).toBe(1024);
-
-    expect(
-        gestor.bloques[0].proceso
-    ).toBeNull();
-
-    expect(simulador.tick).toBe(5);
+        expect(proceso1.cpuRestante).toBe(0);
+        expect(proceso1.estado).toBeInstanceOf(EstadoTerminado);
+        expect(planificador.cantidadDeProcesos()).toBe(0);
+        expect(gestor.bloques).toHaveLength(1);
+        expect(gestor.bloques[0].tamanio).toBe(1024);
+        expect(gestor.bloques[0].proceso).toBeNull();
+        expect(simulador.tick).toBe(5);
 });
+
+    it("debería renovar el quantum sin cambio de contexto cuando existe un único proceso", () => {
+        const {
+            gestor,
+            planificador,
+            simulador
+        } = crearSistema();
+
+        const proceso = new Proceso(
+            1,
+            1024,
+            new EstadoNuevo(),
+            3
+        );
+
+        simulador.registrarProceso(proceso);
+
+        const admision =
+        simulador.admitirProceso(proceso);
+
+        expect(admision).toBe(true);
+        expect(planificador.obtenerProcesoActual()).toBe(proceso);
+        expect(gestor.bloques).toHaveLength(1);
+        expect(gestor.bloques[0].proceso).toBe(proceso);
+
+        simulador.avanzarTick();
+
+        expect(proceso.cpuRestante).toBe(2);
+        expect(proceso.quantumConsumido).toBe(1);
+
+        simulador.avanzarTick();
+
+        expect(proceso.cpuRestante).toBe(1);
+        expect(proceso.quantumConsumido).toBe(0);
+        expect(planificador.obtenerProcesoActual()).toBe(proceso);
+        expect(planificador.cambiosDeContexto).toBe(0);
+
+        simulador.avanzarTick();
+
+        expect(proceso.cpuRestante).toBe(0);
+        expect(proceso.estado).toBeInstanceOf(EstadoTerminado);
+        expect(planificador.cantidadDeProcesos()).toBe(0);
+        expect(gestor.bloques).toHaveLength(1);
+        expect(gestor.bloques[0].inicio).toBe(0);
+        expect(gestor.bloques[0].tamanio).toBe(1024);
+        expect(gestor.bloques[0].proceso).toBeNull();
+        expect(simulador.obtenerMetricas().utilizacionCpu).toBe(100);
+        expect(simulador.obtenerMetricas().memoriaLibre).toBe(1024);
+        expect(simulador.obtenerMetricas().ocupacionMemoria).toBe(0);
+        expect(simulador.obtenerMetricas().fragmentacionExterna).toBe(0);
+        expect(simulador.tick).toBe(3);
+    });
 });
