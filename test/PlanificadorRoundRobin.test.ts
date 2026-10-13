@@ -105,5 +105,4 @@ describe("Clase PlanificadorRoundRobin", () => {
 
 		expect(planificador.cambiosDeContexto).toBe(1);
 	});
-
 });

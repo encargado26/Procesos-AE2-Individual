@@ -569,5 +569,4 @@ it("no debería mover los bloques ocupados durante la coalescencia", () => {
     expect(inicioProceso2Antes).toBe(200);
     expect(inicioProceso2Despues).toBe(200);
 });
-
 });

@@ -14,12 +14,8 @@ describe(
 						3
 					);
 
-				expect(
-					evento.duracion
-				).toBe(3);
-
+				expect(evento.duracion).toBe(3);
 			}
 		);
-
 	}
 );

@@ -43,10 +43,6 @@ describe("Clase EstadoNuevo", () => {
             new EstadoSimulado()
         );
 
-        expect(
-            () => estado.finalizar(proceso)
-        ).not.toThrow();
-
+        expect(() => estado.finalizar(proceso)).not.toThrow();
     });
-	
 });

@@ -80,5 +80,4 @@ describe("Clase Metricas", () => {
 
         expect(metricas.cambiosDeContexto).toBe(3);
     });
-
 });

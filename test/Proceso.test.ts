@@ -176,5 +176,4 @@ describe("Clase Proceso", () => {
 
     expect(proceso.tiempoBloqueoRestante).toBe(0);
   });
-
 });
