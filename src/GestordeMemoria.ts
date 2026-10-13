@@ -169,7 +169,20 @@ export class GestordeMemoria {
     }
 
     get bloques(): BloquedeMemoria[] {
-        return [...this._bloques];
-    }
+        return this._bloques.map(
+            bloque => {
+                const copiaBloque =
+                    new BloquedeMemoria(
+                        bloque.inicio,
+                        bloque.tamanio
+                    );
 
+                [bloque.proceso]
+                    .filter((proceso): proceso is Proceso => proceso !== null)
+                    .forEach(proceso => copiaBloque.asignarProceso(proceso));
+
+                return copiaBloque;
+            }
+        );
+    }
 }
