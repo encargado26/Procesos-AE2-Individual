@@ -2,6 +2,8 @@ import { IEstadoProceso } from "./IEstadoProceso";
 
 export class Proceso {
 
+  // PRIMER NIVEL DE ENCAPSULAMIENTO:
+  // Los atributos del proceso son privados.
   private _pid: number;
   private _tamanio: number;
   private _estado: IEstadoProceso;
@@ -33,6 +35,10 @@ export class Proceso {
     this._estado.avanzar(this);
   }
 
+  // SEGUNDO NIVEL DE ENCAPSULAMIENTO:
+  // El valor privado no se modifica directamente desde fuera.
+  // Se modifica mediante operaciones controladas.
+
   consumirCpu(): void {
     this._cpuRestante = Math.max(
       0,
@@ -49,7 +55,7 @@ export class Proceso {
   }
 
   establecerTiempoBloqueo(tiempo: number): void {
-    this._tiempoBloqueoRestante = tiempo;
+    this._tiempoBloqueoRestante = Math.max(0, tiempo);
   }
 
   reducirTiempoBloqueo(): void {
@@ -58,6 +64,10 @@ export class Proceso {
       this._tiempoBloqueoRestante - 1
     );
   }
+
+  // GETTERS:
+  // Permiten consultar los atributos,
+  // pero no modificarlos directamente.
 
   get pid(): number {
     return this._pid;

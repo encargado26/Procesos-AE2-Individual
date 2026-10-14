@@ -148,6 +148,20 @@ describe("Clase Proceso", () => {
     expect(proceso.tiempoBloqueoRestante).toBe(3);
   });
 
+  // Prueba la protección de la lógica interna del proceso
+  it("no debería aceptar un tiempo de bloqueo negativo", () => {
+    const proceso = new Proceso(
+      1,
+      256,
+      new EstadoSimulado(),
+      10
+    );
+
+    proceso.establecerTiempoBloqueo(-5);
+
+    expect(proceso.tiempoBloqueoRestante).toBe(0);
+  });
+
   it("debería reducir el tiempo de bloqueo", () => {
     const proceso = new Proceso(
       1,
